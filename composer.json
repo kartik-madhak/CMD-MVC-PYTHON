@@ -2,5 +2,11 @@
     "require": {
         "vlucas/phpdotenv": "^5.2",
       "ext-mysqli": "*"
-    }
+    },
+    "autoload": {
+      "classmap": [
+        "Library/Database",
+        "Library/Utils"
+      ]
+  }
 }
