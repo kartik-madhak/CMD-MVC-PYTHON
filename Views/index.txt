@@ -1,0 +1,4 @@
+#{"form_redirect" : "thoughts"}
+This file contains everything from 'people' table here: -
+{people:repeat: name = {{name}}, address={{address}}}
+What do you think? ;;Input:thoughts
