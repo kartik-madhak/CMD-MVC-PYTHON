@@ -1,11 +1,11 @@
-import mysql.connector
+import pymysql
 
 from lib.database.Config import Config
 
 
 class Connection:
     def __init__(self, config: Config):
-        self.conn = mysql.connector.connect(
+        self.conn = pymysql.connect(
             host=config.host,
             user=config.user,
             password=config.password,
@@ -13,4 +13,4 @@ class Connection:
         )
 
     def getCursor(self):
-        return self.conn.cursor(prepared=True,)
+        return self.conn.cursor(pymysql.cursors.DictCursor)

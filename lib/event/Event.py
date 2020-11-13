@@ -10,20 +10,26 @@ class EventType(enum.Enum):
 
 
 class Event:
-    observers: List[Observer]
-    eventType: EventType
-    message: str
-
-    def __init__(self, eventType: EventType = EventType.info):
-        self.observers = []
+    def __init__(self, eventType: EventType = EventType.info, message: str = 'logged successfully'):
         self.eventType = eventType
+        self.message = message
+
+    def __str__(self) -> str:
+        return 'Event Type: ' + self.eventType.name + ', Message: ' + self.message
+
+
+class EventHandler:
+    __observers: List[Observer]
+
+    def __init__(self):
+        self.__observers = []
+
+    def dispatch(self, event: Event) -> None:
+        for observer in self.__observers:
+            observer.notify(event)
 
     def addToSubscription(self, observer: Observer) -> None:
-        self.observers.append(observer)
+        self.__observers.append(observer)
 
     def cancelSubscription(self, observer: Observer) -> None:
-        self.observers.remove(observer)
-
-    def notifyObservers(self) -> None:
-        for observer in self.observers:
-            observer.notify()
+        self.__observers.remove(observer)

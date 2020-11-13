@@ -1,0 +1,1 @@
+{people:repeat: name={{name}}, address={{address}}}
