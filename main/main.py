@@ -4,11 +4,12 @@ from lib.database import *
 from lib.event import getEventHandler
 from lib.view import View
 from lib.view.ViewHandler import ViewHandler
+from lib.communication import *
 
 
 getEventHandler()
 if __name__ == '__main__':
     viewHandler = ViewHandler()
     while True:
-        viewHandler.update()  # gets new view and loads objects...
         viewHandler.render()  # displays and takes input from user...
+        viewHandler.update()  # gets new view and loads objects...

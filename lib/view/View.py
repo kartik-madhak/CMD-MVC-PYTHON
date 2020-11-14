@@ -58,6 +58,7 @@ class View:
                 self.inputs[parts[2].strip()] = input()
             else:
                 print(line)
+        self.header['inputs'] = self.inputs
 
     def parse(self, objects: TypedDict):
         self.ObjectMappingLayer(objects)

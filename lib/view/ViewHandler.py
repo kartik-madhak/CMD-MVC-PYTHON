@@ -1,4 +1,4 @@
-from lib.communication.router import Router
+from lib.communication import *
 from lib.view.View import View
 from typing import TypedDict
 from lib.communication import *
@@ -15,8 +15,12 @@ class ViewHandler:
             header['method']
         except KeyError:
             header['method'] = 'GET'
-        request = Request(header)
-        router = Router()
+        r = Request(header)
+        result: Response = getRouter().sendRequest(header['form_redirect'], r)
+        if result.responseType == ResponseType.error:
+            print('ERROR OCCURRED FUCKER')
+        else:
+            self.currentView = result.view
 
     def render(self):
         self.currentView.render()

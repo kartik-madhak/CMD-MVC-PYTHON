@@ -1,3 +1,4 @@
-from lib.communication import getRouter
-
-getRouter().setRoute('home', '')
+def getRoutes():
+    return {
+        'login': 'testController.func'
+    }
