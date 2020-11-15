@@ -1,0 +1,6 @@
+#{"form_redirect" : "timepass"}
+---------------------------------------------------------------------
+The list of users
+
+{users:repeat as user: name = {{user.name}}, pass = {{user.password}}}
+;;pause

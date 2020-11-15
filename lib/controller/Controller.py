@@ -1,6 +1,5 @@
-from lib.controller.Middleware import Middleware
+from abc import ABC
 
 
-class Controller:
-    def __init__(self, middleware: Middleware):
-        self.middleware = middleware
+class Controller(ABC):
+    pass

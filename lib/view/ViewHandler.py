@@ -5,20 +5,30 @@ from lib.communication import *
 
 
 class ViewHandler:
-    def __init__(self, initLink: str = '', initObjects: TypedDict = {}):
-        self.currentView = View(initLink, initObjects)
+    def __init__(self, initLink: str = ''):
+        header = {'method': 'GET', 'form_redirect': initLink}
+        r = Request(header)
+        response: Response = getRouter().sendRequest(r)
+
+        if response.responseType == ResponseType.error:
+            if response.view is None:
+                self.currentView = View(self.currentView.path, {'error': response.msg})
+            else:
+                self.currentView = View(response.view.path, {'error': response.msg})
+        else:
+            self.currentView = response.view
 
     def update(self):
         header = self.currentView.header
-        header['handler'] = self
         try:
             header['method']
         except KeyError:
             header['method'] = 'GET'
         r = Request(header)
-        result: Response = getRouter().sendRequest(header['form_redirect'], r)
+        result: Response = getRouter().sendRequest(r)
+
         if result.responseType == ResponseType.error:
-            print('ERROR OCCURRED FUCKER')
+            self.currentView = View(self.currentView.path, {'error': result.msg})
         else:
             self.currentView = result.view
 

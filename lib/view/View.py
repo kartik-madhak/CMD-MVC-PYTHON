@@ -1,17 +1,27 @@
 import string
-
 from definitions import ROOT_DIR
 from typing import TypedDict
 import json
 
 
 class SuperFormatter(string.Formatter):
+    def __init__(self, default=''):
+        self.default = default
+
+    def get_value(self, key, args, kwds):
+        if isinstance(key, str):
+            return kwds.get(key, self.default.format(key))
+        else:
+            return string.Formatter.get_value(key, args, kwds)
+
     def format_field(self, value, spec):
         if spec == 'call':
             return value()
         if spec.startswith('repeat'):
-            template = spec.partition(':')[-1]
-            return '\n'.join([template.format(**i) for i in value])
+            splitArr = spec.partition(':')
+            it = splitArr[0].split()[2]
+            template = splitArr[-1]
+            return '\n'.join([template.format(**{it: i}) for i in value])
         else:
             return super(SuperFormatter, self).format_field(value, spec)
 
@@ -19,7 +29,7 @@ class SuperFormatter(string.Formatter):
 class View:
     path: str
     qualifiedPathName: str
-    
+
     def __init__(self, path: str, objects: TypedDict):
         self.path = path
         self.qualifiedPathName = ROOT_DIR + '\\Views\\' + path.replace('/', '.') + '.txt'
@@ -56,6 +66,8 @@ class View:
                 if parts[0] != ';;Input:':
                     print(parts[0], end='')
                 self.inputs[parts[2].strip()] = input()
+            elif ';;pause' in line:
+                input()
             else:
                 print(line)
         self.header['inputs'] = self.inputs

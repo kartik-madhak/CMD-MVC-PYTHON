@@ -1,18 +1,25 @@
 from lib.communication import Request
 import Controllers
-
+import Middlewares
 
 class Router:
     def __init__(self, d={}):
         self.routes = d
 
-    def sendRequest(self, routeName: str, request: Request):
+    def sendRequest(self, request: Request):
         try:
-            s = self.routes[routeName]
+            routeBuilder = self.routes[request.json['form_redirect']]
         except KeyError as e:
             print(e)
             return
-        className, methodName = s.split('.')
+        for i in routeBuilder.middleware:
+            result = Middlewares.callMiddleware(i, 'handle', request)
+            if type(result) == Request:  # If middleware would return success, it will go to next middleware
+                request = result
+                continue
+            else:   # It will return the response to viewHandler
+                return result
+        className, methodName = routeBuilder.controller.split('.')
         return Controllers.callController(className, methodName, request)
 
     def getRoute(self, name):

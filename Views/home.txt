@@ -1,6 +1,8 @@
-#{"form_redirect" : "thoughts"}
+#{"form_redirect" : "logout"}
 ---------------------------------------------------------------------
 Welcome back {user.name}
 
 Your user id is {user.id}
 And your password is {user.password}
+Write anything to log out
+;;pause

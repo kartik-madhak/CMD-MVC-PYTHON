@@ -1,5 +1,6 @@
 #{"form_redirect" : "login"}
 ---------------------------------------------------------------------
+{error}
 Login: -
-username: ;;Input:name
+username: ;;Input:username
 password: ;;Input:password

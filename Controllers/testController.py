@@ -1,30 +1,32 @@
-from collections import namedtuple
+import types
 
+from Models.User import User
 from lib.communication import *
+from lib.controller import Controller
 from lib.view import View
 from lib.database import *
 
 
-class testController(object):
-    def __init__(self):
-        self.data = 4
+class testController(Controller):
+    @staticmethod
+    def login(request: Request):
+        username = request.json['inputs']['username']
+        password = request.json['inputs']['password']
 
-    def func(self, request: Request) -> Response:
-        request = request.json
+        users = User.query().select().where('name', username).where('password', password).get()
+        if not users:
+            return Response(ResponseType.error, None, 'Invalid credentials. Please try again...')
 
-        name = request['inputs']['name']
-        password = request['inputs']['password']
+        view = View('home', {'user': users[0]})
+        return Response(ResponseType.valid, view, '')
 
-        config = Config('localhost', 'root', '', 'test')
-        conn = Connection(config)
-        cursor = conn.getCursor()
-        cursor.execute('select * from users where name = %s and password = %s', (name, password))
-        user = cursor.fetchone()
+    @staticmethod
+    def logout(request: Request):
+        view = View('', {})
+        return Response(ResponseType.valid, view, '')
 
-        user = namedtuple('Struct', user.keys())(*user.values())
-
-        if not user:
-            return Response(ResponseType.error, None)
-
-        view = View('index', {'user': user})
-        return Response(ResponseType.valid, view)
+    @staticmethod
+    def timepass(request: Request):
+        users = User.query().select().get()
+        view = View('timepass', {'users': users})
+        return Response(ResponseType.valid, view, '')
