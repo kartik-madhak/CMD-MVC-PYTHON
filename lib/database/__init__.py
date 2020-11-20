@@ -10,3 +10,5 @@ def getConnection():
         config = Config('localhost', 'root', '', 'mydb')
         __connection = Connection(config)
     return __connection
+
+from lib.database.QueryBuilder import QueryBuilder

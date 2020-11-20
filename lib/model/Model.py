@@ -11,6 +11,11 @@ T = TypeVar('T', bound='Model')
 class Model(ABC):
     @classmethod
     def getInstance(cls, objDict={}):
+        """
+        Converts dictionary to Model instance
+        :param objDict:
+        :return:
+        """
         obj = cls.__new__(cls)
         for key, value in objDict.items():
             obj.__setattr__(key, value)
@@ -18,10 +23,8 @@ class Model(ABC):
 
     @classmethod
     def query(cls: Type[T], className: str = None):
-        cls.classNames = className if className is not None else cls.__name__ + 's'
-        cls.queryBuilder = QueryBuilder(cls.classNames)
-        cls.queryBuilder.setOutputClass(cls)
-        return cls.queryBuilder
+        classNames = className if className is not None else cls.__name__ + 's'
+        return QueryBuilder(classNames, cls)
 
     @classmethod
     def transform(cls: Type[T], inputList):

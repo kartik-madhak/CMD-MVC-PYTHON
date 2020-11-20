@@ -27,15 +27,12 @@ class SuperFormatter(string.Formatter):
 
 
 class View:
-    path: str
-    qualifiedPathName: str
-
-    def __init__(self, path: str, objects: TypedDict):
+    def __init__(self, path: str, objects: TypedDict, extDict={}):
         self.path = path
-        self.qualifiedPathName = ROOT_DIR + '\\Views\\' + path.replace('/', '.') + '.txt'
+        self.qualifiedPathName = ROOT_DIR + '\\Views\\' + path + '.txt'
         self.inputs = {}
         with open(self.qualifiedPathName, 'r') as file:
-            self.header = json.loads(str(next(file)).lstrip("#"))
+            self.header = extDict
             self.__content = file.read()
             self.compile()
             self.parse(objects)
@@ -59,18 +56,47 @@ class View:
         sf = SuperFormatter()
         self.__content = sf.format(self.__content, **objects)
 
-    def render(self):
+    def langParser(self):
+        inputDict = {}
+        skipIf = False
         for line in self.__content.split('\n'):
-            if ';;Input:' in line:
-                parts = line.partition(';;Input:')
-                if parts[0] != ';;Input:':
-                    print(parts[0], end='')
-                self.inputs[parts[2].strip()] = input()
-            elif ';;pause' in line:
-                input()
+
+            if ';;if' in line:
+                skipIf = True
+                tmp = line.split()
+                if tmp[1] in inputDict:
+                    if inputDict[tmp[1]] == tmp[3]:
+                        skipIf = False
+
+            if skipIf:
+                continue
+
+            if ';;input' in line:
+                pre, trash, post = line.partition(';;input')
+                print(pre, end='')
+                post = post.strip()
+                inputDict[post] = input()
+            elif ';;redirect' in line:
+                tmp = line.lstrip(';;redirect ').strip()
+                if "'" in tmp:
+                    inputDict['form_redirect'] = tmp.strip("'")
+                elif tmp in inputDict:
+                    inputDict['form_redirect'] = inputDict[tmp]
+                break
             else:
-                print(line)
-        self.header['inputs'] = self.inputs
+                if line != '' and ';;if' not in line:
+                    print(line)
+
+        self.header['inputs'] = {}
+
+        for i in inputDict:
+            if i == 'form_redirect':
+                self.header[i] = inputDict[i]
+            elif i != 'choice':
+                self.header['inputs'][i] = inputDict[i]
+
+    def render(self):
+        self.langParser()
 
     def parse(self, objects: TypedDict):
         self.ObjectMappingLayer(objects)

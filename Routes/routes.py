@@ -9,8 +9,9 @@ class RouteBuilder:
 
 def getRoutes():
     return {
-            'home': RouteBuilder(controller='testController.home', middleware=['AuthMiddleware']),
-            'login': RouteBuilder(controller='testController.login'),
-            'logout': RouteBuilder(controller='testController.logout'),
-            'timepass': RouteBuilder(controller='testController.timepass')
+            '': RouteBuilder(controller='UserController.show_login'),
+            'home': RouteBuilder(controller='UserController.home', middleware=['AuthMiddleware']),
+            'login': RouteBuilder(controller='UserController.login'),
+            'logout': RouteBuilder(controller='UserController.logout'),
+
     }

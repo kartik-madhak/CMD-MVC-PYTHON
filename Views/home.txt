@@ -1,8 +1,13 @@
-#{"form_redirect" : "logout"}
 ---------------------------------------------------------------------
-Welcome back {user.name}
-
+{error}
 Your user id is {user.id}
 And your password is {user.password}
-Write anything to log out
-;;pause
+What do you want to do: -
+1) Logout
+2) Redirect
+;;input choice
+;;if choice == 1
+;;redirect 'logout'
+;;if choice == 2
+;;input link
+;;redirect link

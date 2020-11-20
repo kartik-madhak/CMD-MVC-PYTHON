@@ -1,4 +1,4 @@
-from Controllers.testController import *
+from Controllers.UserController import *
 
 __calledControllers = {}
 

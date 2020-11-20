@@ -8,6 +8,7 @@ from lib.model import Model
 class Migrate:
     @staticmethod
     def generateTable(cls):
+        # print(vars(cls))
         try:
             Migrate.deleteTable(cls)
         except:

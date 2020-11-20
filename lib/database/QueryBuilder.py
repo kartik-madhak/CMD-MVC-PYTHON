@@ -4,14 +4,12 @@ from lib.database import getConnection
 
 
 class QueryBuilder:
-    def __init__(self, dbname):
+    def __init__(self, dbname, cls=None):
+        self.cls = cls
         self.__queryString = ''
         self.__whereString = ''
         self.__args = []
         self.dbname = dbname
-
-    def setOutputClass(self, cls):
-        self.cls = cls
 
     def select(self, *entities):
         if not entities:
@@ -37,11 +35,28 @@ class QueryBuilder:
         self.__args.append(val)
         return self
 
-    def get(self):
+    def getWithoutTransform(self):
         query, args = self.__getQueryString()
         cursor = getConnection().getCursor()
         cursor.execute(query, args)
-        return self.cls.transform(cursor.fetchall())
+        res = cursor.fetchall()
+        return res
+
+    def get(self):
+        return self.cls.transform(self.getWithoutTransform())
+
+    def getOne(self):
+        return self.get()[0]
+
+    def insert(self, args=[]):
+        # args.insert(0, 'NULL')
+        self.__queryString = 'insert into ' + self.dbname + ' values(NULL,' + ','.join(['%s' for i in args]) + ');'
+        self.__args = args
+        return self.getWithoutTransform()
+
+    def delete(self):
+        self.__queryString = 'delete from ' + self.dbname
+        return self
 
     def __getQueryString(self):
         res = self.__queryString + ' ' + self.__whereString
@@ -58,7 +73,7 @@ class QueryBuilder:
         elif value == "<class 'float'>":
             return 'FLOAT'
         elif value == "<class 'datetime.datetime'>":
-            return 'datetime'
+            return 'DATETIME'
         elif value == "<class 'str'>":
             return 'VARCHAR(400)'
 
@@ -66,7 +81,10 @@ class QueryBuilder:
     def createTable(name: str, d: TypedDict):
         attrList = []
         for key, value in d.items():
-            attrList.append(key + ' ' + QueryBuilder.__convertValueToSQLType(str(value)))
+            if key == 'id':
+                attrList.append('id INT NOT NULL AUTO_INCREMENT PRIMARY KEY')
+            else:
+                attrList.append(key + ' ' + QueryBuilder.__convertValueToSQLType(str(value)))
         query = 'create table ' + name + '(' + ','.join(attrList) + ')'
         cursor = getConnection().getCursor()
         cursor.execute(query)

@@ -1,6 +1,13 @@
-#{"form_redirect" : "login"}
 ---------------------------------------------------------------------
 {error}
-Login: -
-username: ;;Input:username
-password: ;;Input:password
+What do you want to do: -
+1) Login
+2) Exit
+
+;;input choice
+;;if choice == 1
+username: ;;input name
+password: ;;input password
+;;redirect 'login'
+;;if choice == 2
+;;redirect unknown

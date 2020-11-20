@@ -11,3 +11,6 @@ class User(Model):
     password: str
     created_at: datetime
 
+    def __hash__(self):
+        return hash((self.id, self.name, self.password, self.created_at))
+
