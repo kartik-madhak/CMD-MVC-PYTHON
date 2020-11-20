@@ -18,4 +18,4 @@ class ViewHandler:
         return response.view
 
     def render(self):
-        self.currentView.render()
+        return self.currentView.render()

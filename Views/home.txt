@@ -1,13 +1,30 @@
 ---------------------------------------------------------------------
 {error}
-Your user id is {user.id}
-And your password is {user.password}
+Welcome {user.name}, your user id is {user.id}
 What do you want to do: -
-1) Logout
-2) Redirect
+1) View Profile
+2) Edit Profile
+3) Logout
+
 ;;input choice
+
 ;;if choice == 1
-;;redirect 'logout'
+user id: {user.id}
+name: {user.name}
+email: {user.email}
+about you: {user.description}
+account created at: {user.created_at}
+account updated at: {user.updated_at}
+;;redirect 'home'
+
 ;;if choice == 2
-;;input link
-;;redirect link
+;;redirect 'user.edit'
+
+;;if choice == 3
+;;redirect 'logout'
+
+;;if choice == exit
+;;exit
+
+;;default
+;;refresh

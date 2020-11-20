@@ -46,7 +46,10 @@ class QueryBuilder:
         return self.cls.transform(self.getWithoutTransform())
 
     def getOne(self):
-        return self.get()[0]
+        try:
+            return self.get()[0]
+        except IndexError:
+            return None
 
     def insert(self, args=[]):
         # args.insert(0, 'NULL')
@@ -57,6 +60,12 @@ class QueryBuilder:
     def delete(self):
         self.__queryString = 'delete from ' + self.dbname
         return self
+
+    def update(self, args={}):
+        self.__queryString = 'update ' + self.dbname + ' set ' + ','.join([str(key) + '=%s' for key in args]) + 'where id=%s'
+        self.__args = list(args.values())
+        self.__args.append(args['id'])
+        return self.getWithoutTransform()
 
     def __getQueryString(self):
         res = self.__queryString + ' ' + self.__whereString
@@ -76,6 +85,8 @@ class QueryBuilder:
             return 'DATETIME'
         elif value == "<class 'str'>":
             return 'VARCHAR(400)'
+        else:
+            return 'TEXT'
 
     @staticmethod
     def createTable(name: str, d: TypedDict):

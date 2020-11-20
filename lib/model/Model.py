@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
+from datetime import datetime
 from typing import List, Type, TypeVar
 
 from lib.database.QueryBuilder import QueryBuilder
@@ -32,3 +33,9 @@ class Model(ABC):
         for obj in inputList:
             res.append(cls.getInstance(obj))
         return res
+
+    def save(self):
+        args = self.__dict__
+        if 'updated_at' in args:
+            args['updated_at'] = datetime.today()
+        QueryBuilder(self.__class__.__name__ + 's').update(args)

@@ -67,6 +67,8 @@ class View:
                 if tmp[1] in inputDict:
                     if inputDict[tmp[1]] == tmp[3]:
                         skipIf = False
+            elif ';;default' in line:
+                skipIf = False
 
             if skipIf:
                 continue
@@ -83,6 +85,10 @@ class View:
                 elif tmp in inputDict:
                     inputDict['form_redirect'] = inputDict[tmp]
                 break
+            elif ';;exit' == line or ';;exit' in line:
+                return -1
+            elif ';;refresh' == line or ';;refresh' in line:
+                return 1
             else:
                 if line != '' and ';;if' not in line:
                     print(line)
@@ -95,8 +101,13 @@ class View:
             elif i != 'choice':
                 self.header['inputs'][i] = inputDict[i]
 
+        return 0
+
     def render(self):
-        self.langParser()
+        returnVal = self.langParser()
+        if returnVal == 1:
+            self.render()
+        return returnVal
 
     def parse(self, objects: TypedDict):
         self.ObjectMappingLayer(objects)

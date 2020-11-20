@@ -1,0 +1,21 @@
+---------------------------------------------------------------------
+{error}
+Edit Profile: -
+1) Change description
+2) Change password
+3) go back to home
+
+;;input choice
+
+;;if choice == 1
+description: ;;input description
+;;redirect 'user.edit.description'
+
+;;if choice == 2
+current password: ;;input old_password
+new password: ;;input password
+re-type password: ;;input re_password
+;;redirect 'user.edit.password'
+
+;;if choice == 3
+;;redirect 'home'

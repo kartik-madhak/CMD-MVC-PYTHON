@@ -12,8 +12,9 @@ from lib.view.ViewHandler import ViewHandler
 
 getEventHandler()
 if __name__ == '__main__':
-    # Migrate.generateTable(User_auth)
+    # Migrate.generateTable(User)
     viewHandler = ViewHandler()
     while True:
-        viewHandler.render()  # displays and takes input from user...
+        if viewHandler.render() == -1:  # displays and takes input from user...
+            break
         viewHandler.update()  # gets new view and loads objects...

@@ -1,3 +1,4 @@
+import hashlib
 import types
 from datetime import datetime
 from typing import List
@@ -21,9 +22,12 @@ class UserController(Controller):
     @staticmethod
     def login(request: Request):
         username = request.json['inputs']['name']
-        password = request.json['inputs']['password']
+        password: str = request.json['inputs']['password']
 
-        users: List[User] = User.query().select().where('name', username).where('password', password).get()
+        passHash = hashlib.sha256(password.encode())
+        passHash = passHash.hexdigest()
+
+        users: List[User] = User.query().select().where('name', username).where('passwordHash', passHash).get()
         if not users:
             view = View('', {'error': 'Invalid credentials. Please try again...'}, request.json)
             return Response(ResponseType.error, view)
@@ -52,3 +56,93 @@ class UserController(Controller):
 
         view = View('', {})
         return Response(ResponseType.valid, view)
+
+    @staticmethod
+    def register(request: Request):
+        username = request.json['inputs']['name']
+        email = request.json['inputs']['email']
+        password: str = request.json['inputs']['password']
+        re_password = request.json['inputs']['re_password']
+
+        if len(password) < 8:
+            view = View('', objects={'error': 'Password too short. Please try again...'})
+            return Response(ResponseType.error, view)
+        if password != re_password:
+            view = View('', objects={'error': 'Passwords do not match. Please try again...'})
+            return Response(ResponseType.error, view)
+        if '@' not in email or '.' not in email:
+            view = View('', objects={'error': 'Email format is wrong. Please try again...'})
+            return Response(ResponseType.error, view)
+
+        user = User.query().select().where('name', username).getOne()
+        if user is not None:
+            view = View('', objects={'error': 'Username already taken. Please try again...'})
+            return Response(ResponseType.error, view)
+
+        # name: str
+        # email: str
+        # description: typing.AnyStr
+        # passwordHash: str
+        # permissionLevel: int
+        # created_at: datetime
+        # updated_at: datetime
+
+        passHash = hashlib.sha256(password.encode())
+        passHash = passHash.hexdigest()
+
+        User.query().insert([username, email, '', passHash, 1, datetime.today(), datetime.today()])
+
+        user = User.query().select().where('name', username).getOne()
+        token = hash(user)
+
+        view = View('home', {'user': user}, {'user_id': user.id, 'authToken': token})
+        return Response(ResponseType.valid, view)
+
+    @staticmethod
+    def show_edit(request: Request):
+        view = View('user.edit', {}, request.json)
+        return Response(ResponseType.valid, view)
+
+    @staticmethod
+    def edit_description(request: Request):
+        loggedUserId: int = request.json['user_id']
+        desc = request.json['inputs']['description']
+
+        user: User = User.query().select().where('id', loggedUserId).getOne()
+
+        user.description = desc
+        user.save()
+
+        view = View('home', {'user': user}, request.json)
+        return Response(ResponseType.valid, view)
+
+    @staticmethod
+    def edit_password(request: Request):
+        loggedUserId: int = request.json['user_id']
+        old_password = request.json['inputs']['old_password']
+        password = request.json['inputs']['password']
+        re_password = request.json['inputs']['re_password']
+
+        user: User = User.query().select().where('id', loggedUserId).getOne()
+
+        if password != re_password:
+            view = View('user.edit', {'error': 'passwords do not match'}, request.json)
+            return Response(ResponseType.valid, view)
+
+        passHash = hashlib.sha256(old_password.encode())
+        passHash = passHash.hexdigest()
+
+        if user.passwordHash != passHash:
+            view = View('user.edit', {'error': 'old password is wrong'}, request.json)
+            return Response(ResponseType.valid, view)
+
+        passHash = hashlib.sha256(password.encode())
+        passHash = passHash.hexdigest()
+
+        user.passwordHash = passHash
+        user.save()
+
+        view = View('home', {'user': user}, request.json)
+        return Response(ResponseType.valid, view)
+
+
