@@ -3,7 +3,8 @@ import types
 from datetime import datetime
 from typing import List
 
-from Controllers import NotificationController
+from Controllers.NotificationController import NotificationController
+from Models import Post
 from Models.Notification import Notification
 from Models.User import User
 from Models.User_auth import User_auth
@@ -15,7 +16,6 @@ from lib.database import *
 
 
 class UserController(Controller):
-
     @staticmethod
     def show_login(request: Request):
         view = View('', {}, request.json)
@@ -39,7 +39,12 @@ class UserController(Controller):
 
         User_auth.query().insert([user.id, token, datetime.today(), datetime.today()])
 
-        view = View('home', {'user': users[0]}, {'user_id': user.id, 'authToken': token})
+        notifications: List[Notification] = Notification.query().select().where('is_read', 0).get()
+        posts = Post.query().select().where('user_id', user.id).get()
+
+        view = View('home', {'user': user, 'notification_count': len(notifications),
+                             'my_post_count': len(posts)}, {'user_id': user.id, 'authToken': token})
+
         return Response(ResponseType.valid, view)
 
     @staticmethod
@@ -47,7 +52,12 @@ class UserController(Controller):
         loggedUserId: int = request.json['user_id']
         user: User = User.query().select().where('id', loggedUserId).getOne()
 
-        view = View('home', {'user': user}, request.json)
+        notifications: List[Notification] = Notification.query().select().where('is_read', 0).get()
+        posts = Post.query().select().where('user_id', user.id).get()
+
+        view = View('home', {'user': user, 'notification_count': len(notifications),
+                             'my_post_count': len(posts)}, request.json)
+
         return Response(ResponseType.valid, view)
 
     @staticmethod
@@ -94,7 +104,11 @@ class UserController(Controller):
 
         NotificationController.notifyUser(user, 'Welcome to freelancerHub, Feel free to look around the site.')
 
-        view = View('home', {'user': user}, {'user_id': user.id, 'authToken': token})
+        notifications: List[Notification] = Notification.query().select().where('is_read', 0).get()
+        posts = Post.query().select().where('user_id', user.id).get()
+
+        view = View('home', {'user': user, 'notification_count': len(notifications),
+                             'my_post_count': len(posts)}, {'user_id': user.id, 'authToken': token})
         return Response(ResponseType.valid, view)
 
     @staticmethod
@@ -112,7 +126,11 @@ class UserController(Controller):
         user.description = desc
         user.save()
 
-        view = View('home', {'user': user}, request.json)
+        notifications: List[Notification] = Notification.query().select().where('is_read', 0).get()
+        posts = Post.query().select().where('user_id', user.id).get()
+
+        view = View('home', {'user': user, 'notification_count': len(notifications),
+                             'my_post_count': len(posts)}, request.json)
         return Response(ResponseType.valid, view)
 
     @staticmethod
@@ -141,7 +159,11 @@ class UserController(Controller):
         user.passwordHash = passHash
         user.save()
 
-        view = View('home', {'user': user}, request.json)
+        notifications: List[Notification] = Notification.query().select().where('is_read', 0).get()
+        posts = Post.query().select().where('user_id', user.id).get()
+
+        view = View('home', {'user': user, 'notification_count': len(notifications),
+                             'my_post_count': len(posts)}, request.json)
         return Response(ResponseType.valid, view)
 
 

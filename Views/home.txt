@@ -4,8 +4,8 @@ Welcome {user.name}, your user id is {user.id}
 What do you want to do: -
 1) Add Post
 2) View Recent Public Posts
-3) View My Posts
-4) See Notifications
+3) View My Posts [{my_post_count}]
+4) See Notifications [{notification_count}]
 5) View Profile
 6) Edit Profile
 7) See my contacts
@@ -39,7 +39,7 @@ account updated at: {user.updated_at}
 ;;redirect 'user.edit'
 
 ;;if choice == '7'
-;;redirect 'user.contacts'
+Sorry, this feature is not available at the moment
 
 ;;if choice == '8'
 ;;redirect 'logout'
