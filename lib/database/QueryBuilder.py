@@ -35,6 +35,10 @@ class QueryBuilder:
         self.__args.append(val)
         return self
 
+    def sortBy(self, col: str, asc: bool = True):
+        self.__whereString += ' order by ' + col + (' asc' if asc else ' desc')
+        return self
+
     def getWithoutTransform(self):
         query, args = self.__getQueryString()
         cursor = getConnection().getCursor()
@@ -67,6 +71,11 @@ class QueryBuilder:
         self.__args.append(args['id'])
         return self.getWithoutTransform()
 
+    def updateMany(self, args={}):
+        self.__queryString = 'update ' + self.dbname + ' set ' + ','.join([str(key) + '=%s' for key in args])
+        self.__args = list(args.values())
+        return self
+
     def __getQueryString(self):
         res = self.__queryString + ' ' + self.__whereString
         args = self.__args
@@ -77,13 +86,13 @@ class QueryBuilder:
 
     @staticmethod
     def __convertValueToSQLType(value):
-        if value == "<class 'int'>":
+        if value == "<class 'int'>" or value == 'int':
             return 'INT'
-        elif value == "<class 'float'>":
+        elif value == "<class 'float'>" or value == 'float':
             return 'FLOAT'
-        elif value == "<class 'datetime.datetime'>":
+        elif value == "<class 'datetime.datetime'>" or value == 'datetime':
             return 'DATETIME'
-        elif value == "<class 'str'>":
+        elif value == "<class 'str'>" or value == 'str':
             return 'VARCHAR(400)'
         else:
             return 'TEXT'

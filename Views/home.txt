@@ -2,13 +2,31 @@
 {error}
 Welcome {user.name}, your user id is {user.id}
 What do you want to do: -
-1) View Profile
-2) Edit Profile
-3) Logout
+1) Add Post
+2) View Recent Public Posts
+3) View My Posts
+4) See Notifications
+5) View Profile
+6) Edit Profile
+7) See my contacts
+8) Logout
+Type exit to exit...
 
 ;;input choice
 
-;;if choice == 1
+;;if choice == '1'
+;;redirect 'post.add_form'
+
+;;if choice == '2'
+;;redirect 'post.show_all'
+
+;;if choice == '3'
+;;redirect 'post.show'
+
+;;if choice == '4'
+;;redirect 'notifications.show'
+
+;;if choice == '5'
 user id: {user.id}
 name: {user.name}
 email: {user.email}
@@ -17,13 +35,16 @@ account created at: {user.created_at}
 account updated at: {user.updated_at}
 ;;redirect 'home'
 
-;;if choice == 2
+;;if choice == '6'
 ;;redirect 'user.edit'
 
-;;if choice == 3
+;;if choice == '7'
+;;redirect 'user.contacts'
+
+;;if choice == '8'
 ;;redirect 'logout'
 
-;;if choice == exit
+;;if choice == 'exit'
 ;;exit
 
 ;;default

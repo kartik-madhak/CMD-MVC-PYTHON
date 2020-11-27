@@ -1,0 +1,23 @@
+---------------------------------------------------------------------
+{error}
+Add Post as {user.name}
+title: ;;input title
+content: ;;inputL content
+allow comments? (type 'n' for no otherwise defaults to yes): ;;input allow_comments
+visibility(type '0' for private otherwise defaults to public): ;;input visibility
+tags(Write tags separated by space): ;;input tags
+
+Are you sure you want to submit the post?
+Type 'n' for no (will redirect to home page) otherwise defaults to yes
+Type 'exit' to exit
+
+;;input choice
+
+;;if choice == 'n'
+;;redirect 'home'
+
+;;default
+;;redirect 'post.add'
+
+;;if choice == 'exit'
+;;exit

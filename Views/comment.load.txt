@@ -1,0 +1,13 @@
+---------------------------------------------------------------------
+{error}
+Viewing comments to post '{post.title}': -
+\
+\
+{comments:repeat as comment:---> {{comment.getUserName:call}} at {{comment.created_at}} says: -
+{{comment.content}}
+\
+}
+
+;;input choice
+;;push {post.id}
+;;redirect 'post.load'

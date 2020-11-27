@@ -1,0 +1,12 @@
+---------------------------------------------------------------------
+{error}
+Which post you would like to see.
+{posts:repeat as post: {{i}}) title: {{post.title}}
+by: {{post.getUserName:call}}
+}
+Type the number of post to select
+
+;;input user_post_number
+;;push posts[user_post_number].id
+;;redirect 'post.load'
+

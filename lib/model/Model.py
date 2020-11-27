@@ -10,6 +10,19 @@ T = TypeVar('T', bound='Model')
 
 
 class Model(ABC):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+    @classmethod
+    def getVarDict(cls):
+        res = {'id': 'int'}
+        for key, value in vars(cls)['__annotations__'].items():
+            res[key] = value
+        res['created_at'] = 'datetime'
+        res['updated_at'] = 'datetime'
+        return res
+
     @classmethod
     def getInstance(cls, objDict={}):
         """
@@ -39,3 +52,6 @@ class Model(ABC):
         if 'updated_at' in args:
             args['updated_at'] = datetime.today()
         QueryBuilder(self.__class__.__name__ + 's').update(args)
+
+    def delete(self):
+        QueryBuilder(self.__class__.__name__ + 's').delete().where('id', self.id).getWithoutTransform()

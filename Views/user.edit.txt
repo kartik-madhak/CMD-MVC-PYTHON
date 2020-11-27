@@ -7,15 +7,15 @@ Edit Profile: -
 
 ;;input choice
 
-;;if choice == 1
+;;if choice == '1'
 description: ;;input description
 ;;redirect 'user.edit.description'
 
-;;if choice == 2
+;;if choice == '2'
 current password: ;;input old_password
 new password: ;;input password
 re-type password: ;;input re_password
 ;;redirect 'user.edit.password'
 
-;;if choice == 3
+;;if choice == '3'
 ;;redirect 'home'

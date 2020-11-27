@@ -21,7 +21,7 @@ class SuperFormatter(string.Formatter):
             splitArr = spec.partition(':')
             it = splitArr[0].split()[2]
             template = splitArr[-1]
-            return '\n'.join([template.format(**{it: i}) for i in value])
+            return '\n'.join([self.format(template, **{it: val}, i=i+1) for i, val in zip(range(0, len(value)), value)])
         else:
             return super(SuperFormatter, self).format_field(value, spec)
 
@@ -31,6 +31,7 @@ class View:
         self.path = path
         self.qualifiedPathName = ROOT_DIR + '\\Views\\' + path + '.txt'
         self.inputs = {}
+        self.objects = objects
         with open(self.qualifiedPathName, 'r') as file:
             self.header = extDict
             self.__content = file.read()
@@ -63,17 +64,42 @@ class View:
 
             if ';;if' in line:
                 skipIf = True
-                tmp = line.split()
-                if tmp[1] in inputDict:
-                    if inputDict[tmp[1]] == tmp[3]:
-                        skipIf = False
+                split_line = line.lstrip(';;if ').split('and')
+                ans = True
+                for ll in split_line:
+                    tmp = ll.split()
+                    if "'" not in tmp[0]:
+                        first = inputDict[tmp[0]]
+                    else:
+                        first = tmp[0].strip("'")
+
+                    if "'" not in tmp[2]:
+                        second = inputDict[tmp[2]]
+                    else:
+                        second = tmp[2].strip("'")
+
+                    if first != second:
+                        ans = False
+                        break
+                if ans:
+                    skipIf = False
             elif ';;default' in line:
                 skipIf = False
 
             if skipIf:
                 continue
 
-            if ';;input' in line:
+            if ';;inputL' in line:
+                pre, trash, post = line.partition(';;inputL')
+                print(pre, end='')
+                post = post.strip()
+                inputDict[post] = ''
+                while True:
+                    tmp = input()
+                    if tmp == 'e':
+                        break
+                    inputDict[post] += '\n' + tmp
+            elif ';;input' in line:
                 pre, trash, post = line.partition(';;input')
                 print(pre, end='')
                 post = post.strip()
@@ -85,13 +111,30 @@ class View:
                 elif tmp in inputDict:
                     inputDict['form_redirect'] = inputDict[tmp]
                 break
+            elif ';;push' in line:
+                post = line.partition(';;push')[2]
+                if '[' in post:
+                    try:
+                        arr_name = post.split('[')[0].strip()
+                        index_name = post.split('[')[1].split(']')[0]
+                        var = self.objects[arr_name][int(inputDict[index_name]) - 1]
+                        attr = post.split('.')[1]
+                        post = getattr(var, attr)
+                    except:
+                        post = '0'
+                if 'ext' not in inputDict:
+                    inputDict['ext'] = []
+                inputDict['ext'].append(int(post))
             elif ';;exit' == line or ';;exit' in line:
                 return -1
             elif ';;refresh' == line or ';;refresh' in line:
                 return 1
             else:
-                if line != '' and ';;if' not in line:
-                    print(line)
+                if line != '' and ';;if' not in line and ';;default' not in line:
+                    if line == '\\':
+                        print()
+                    else:
+                        print(line)
 
         self.header['inputs'] = {}
 

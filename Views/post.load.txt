@@ -1,0 +1,44 @@
+---------------------------------------------------------------------
+{error}
+\
+{post.title}
+by {post.getUserName:call}
+posted at {post.created_at}
+\
+{post.content}
+\
+tags: {post.tags}
+\
+Select
+1) return to home
+;;if '{whether_post_liked_by_user}' == 'True'
+2) unlike the post
+;;if '{whether_post_liked_by_user}' == 'False'
+2) like the post
+;;if '{post.allow_comments}' == '1'
+
+3) comment on the post
+4) view comments on this post
+
+;;default
+
+;;input choice
+
+    ;;if choice == '1'
+        ;;redirect 'home'
+
+    ;;if choice == '2'
+        ;;push {post.id}
+        ;;redirect 'post.like'
+
+    ;;if choice == '3'
+        ;;push {post.id}
+        ;;redirect 'comment.add_form'
+
+    ;;if choice == '4'
+        ;;push {post.id}
+        ;;redirect 'comment.view'
+
+    ;;default
+    ;;refresh
+

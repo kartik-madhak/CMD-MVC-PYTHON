@@ -8,11 +8,7 @@ class Router:
         self.routes = d
 
     def sendRequest(self, request: Request):
-        try:
-            routeBuilder = self.routes[request.json['form_redirect']]
-        except KeyError as e:
-            print(e)
-            return
+        routeBuilder = self.routes[request.json['form_redirect']]
         for i in routeBuilder.middleware:
             result = Middlewares.callMiddleware(i, 'handle', request)
             if type(result) == Request:  # If middleware would return success, it will go to next middleware

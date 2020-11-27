@@ -1,0 +1,8 @@
+---------------------------------------------------------------------
+{error}
+Adding comment to post '{post.title}': -
+\
+\
+Write the comment: ;;inputL content
+;;push {post.id}
+;;redirect 'comment.add'

@@ -4,6 +4,6 @@ from lib.model import Model
 
 
 @dataclass
-class User_auth(Model):
+class Post_like(Model):
     user_id: int
-    token: str
+    post_id: str

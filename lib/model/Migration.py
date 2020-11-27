@@ -7,13 +7,12 @@ from lib.model import Model
 
 class Migrate:
     @staticmethod
-    def generateTable(cls):
-        # print(vars(cls))
+    def generateTable(cls: Model):
         try:
             Migrate.deleteTable(cls)
         except:
             pass
-        QueryBuilder.createTable(cls.__name__ + 's', vars(cls)['__annotations__'])
+        QueryBuilder.createTable(cls.__name__ + 's', cls.getVarDict())
 
     @staticmethod
     def deleteTable(cls):

@@ -1,4 +1,7 @@
 from Controllers.UserController import *
+from Controllers.PostController import *
+from Controllers.NotificationController import *
+from Controllers.CommentController import *
 
 __calledControllers = {}
 

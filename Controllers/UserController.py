@@ -3,6 +3,8 @@ import types
 from datetime import datetime
 from typing import List
 
+from Controllers import NotificationController
+from Models.Notification import Notification
 from Models.User import User
 from Models.User_auth import User_auth
 from lib.communication import *
@@ -33,9 +35,9 @@ class UserController(Controller):
             return Response(ResponseType.error, view)
 
         user = users[0]
-        token = hash(user)
+        token = user.hash()
 
-        User_auth.query().insert([user.id, token, datetime.today()])
+        User_auth.query().insert([user.id, token, datetime.today(), datetime.today()])
 
         view = View('home', {'user': users[0]}, {'user_id': user.id, 'authToken': token})
         return Response(ResponseType.valid, view)
@@ -63,6 +65,7 @@ class UserController(Controller):
         email = request.json['inputs']['email']
         password: str = request.json['inputs']['password']
         re_password = request.json['inputs']['re_password']
+        role = 1 if request.json['inputs']['role'] == '1' else 2
 
         if len(password) < 8:
             view = View('', objects={'error': 'Password too short. Please try again...'})
@@ -79,21 +82,17 @@ class UserController(Controller):
             view = View('', objects={'error': 'Username already taken. Please try again...'})
             return Response(ResponseType.error, view)
 
-        # name: str
-        # email: str
-        # description: typing.AnyStr
-        # passwordHash: str
-        # permissionLevel: int
-        # created_at: datetime
-        # updated_at: datetime
-
         passHash = hashlib.sha256(password.encode())
         passHash = passHash.hexdigest()
 
-        User.query().insert([username, email, '', passHash, 1, datetime.today(), datetime.today()])
+        User.query().insert([username, email, '', passHash, role, datetime.today(), datetime.today()])
 
-        user = User.query().select().where('name', username).getOne()
-        token = hash(user)
+        user: User = User.query().select().where('name', username).getOne()
+        token = user.hash()
+
+        User_auth.query().insert([user.id, token, datetime.today(), datetime.today()])
+
+        NotificationController.notifyUser(user, 'Welcome to freelancerHub, Feel free to look around the site.')
 
         view = View('home', {'user': user}, {'user_id': user.id, 'authToken': token})
         return Response(ResponseType.valid, view)

@@ -1,0 +1,31 @@
+---------------------------------------------------------------------
+{error}
+New Notifications: -
+{notifications:repeat as notification: {{i}}) {{notification.created_at}}
+{{notification.content}}
+\
+}
+
+Select: -
+
+1) Go back to home
+;;if '{show_option}' == '1'
+2) View older notifications
+;;default
+
+Type exit to exit
+
+;;input choice
+
+;;if choice == '1'
+;;redirect 'home'
+
+;;if choice == '2' and '{show_option}' == '1'
+;;redirect 'notifications.show_all'
+
+;;if choice == 'exit'
+;;exit
+
+;;default
+;;refresh
+

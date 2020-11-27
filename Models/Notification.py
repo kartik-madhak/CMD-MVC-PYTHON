@@ -1,9 +1,11 @@
+import typing
 from dataclasses import dataclass
 
 from lib.model import Model
 
 
 @dataclass
-class User_auth(Model):
+class Notification(Model):
     user_id: int
-    token: str
+    content: typing.AnyStr
+    is_read: int

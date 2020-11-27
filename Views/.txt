@@ -6,15 +6,16 @@ What do you want to do?: -
 
 ;;input choice
 
-;;if choice == 1
+;;if choice == '1'
 username: ;;input name
 password: ;;input password
 ;;redirect 'login'
 
-;;if choice == 2
+;;if choice == '2'
 username: ;;input name
 email: ;;input email
 password: ;;input password
 re-type password: ;;input re_password
+role(Type 1 for Employer, any other number for freelancer): ;;input role
 ;;redirect 'register'
 
