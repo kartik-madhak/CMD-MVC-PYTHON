@@ -1,4 +1,3 @@
-from typing import TypedDict
 
 from lib.database import getConnection
 
@@ -98,7 +97,7 @@ class QueryBuilder:
             return 'TEXT'
 
     @staticmethod
-    def createTable(name: str, d: TypedDict):
+    def createTable(name: str, d):
         attrList = []
         for key, value in d.items():
             if key == 'id':

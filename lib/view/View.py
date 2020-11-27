@@ -1,7 +1,5 @@
 import string
 from definitions import ROOT_DIR
-from typing import TypedDict
-import json
 
 
 class SuperFormatter(string.Formatter):
@@ -27,7 +25,7 @@ class SuperFormatter(string.Formatter):
 
 
 class View:
-    def __init__(self, path: str, objects: TypedDict, extDict={}):
+    def __init__(self, path: str, objects, extDict={}):
         self.path = path
         self.qualifiedPathName = ROOT_DIR + '\\Views\\' + path + '.txt'
         self.inputs = {}
@@ -53,7 +51,7 @@ class View:
             raise Exception('Error compiling view, Bracket mismatch at ' + self.qualifiedPathName
                             + ':' + str(lineCount))
 
-    def ObjectMappingLayer(self, objects: TypedDict = None):
+    def ObjectMappingLayer(self, objects = None):
         sf = SuperFormatter()
         self.__content = sf.format(self.__content, **objects)
 
@@ -152,6 +150,6 @@ class View:
             self.render()
         return returnVal
 
-    def parse(self, objects: TypedDict):
+    def parse(self, objects):
         self.ObjectMappingLayer(objects)
         return self.__content
