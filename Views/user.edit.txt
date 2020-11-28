@@ -19,3 +19,6 @@ re-type password: ;;input re_password
 
 ;;if choice == '3'
 ;;redirect 'home'
+
+;;default 
+;;reload
